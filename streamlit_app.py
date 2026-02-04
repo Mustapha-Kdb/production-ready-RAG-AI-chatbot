@@ -155,7 +155,7 @@ if uploaded is not None:
         asyncio.run(send_rag_ingest_event(path))
         # Small pause for user feedback continuity
         time.sleep(0.3)
-    st.success(f"Triggered ingestion for: {path.name}")
+    st.success(f"Triggered ingestion for: {_s3_name(path)}")
     st.caption("You can upload another PDF if you like.")
 
 st.divider()
