@@ -5,7 +5,7 @@ class QdrantStorage:
     def __init__(self, url="http://localhost:6333", collection="docs", dem=3072):
         self.client = QdrantClient(url=url, timeout=30)
         self.collection = collection
-        if not self.client.has_collection(collection_name=collection):
+        if not self.client.collection_exists(collection_name=collection):
             self.client.create_collection(
                 collection_name=collection,
                 vectors_config=VectorParams(size=dem, distance=Distance.COSINE)
@@ -15,12 +15,14 @@ class QdrantStorage:
         self.client.upsert(collection_name=self.collection, points=points)
 
     def search(self, query_vector, top_k: int = 5):
-        results = self.client.search(
+        res = self.client.query_points(
             collection_name=self.collection,
-            query_vector=query_vector,
+            query=query_vector,
             with_payload=True,
             limit=top_k
         )
+        results = res.points
+
         contexts = []
         sources = set()
 
@@ -31,4 +33,5 @@ class QdrantStorage:
             if text:
                 contexts.append(text)
                 sources.add(source)
-            return {"contexts": contexts, "sources": list(sources)}
+
+        return {"contexts": contexts, "sources": list(sources)}
