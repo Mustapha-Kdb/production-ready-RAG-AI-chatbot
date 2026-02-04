@@ -2,6 +2,7 @@ import asyncio
 from pathlib import Path
 import time
 import boto3
+from urllib.parse import urlparse
 
 import streamlit as st
 import inngest
@@ -117,24 +118,28 @@ def get_inngest_client() -> inngest.Inngest:
     return inngest.Inngest(app_id="rag_app", is_production=True)
 
 
-def save_uploaded_pdf(file) -> Path:
+def save_uploaded_pdf(file) -> str:
     bucket = os.getenv("S3_BUCKET")
     if not bucket:
         raise RuntimeError("S3_BUCKET env var is required")
     s3 = boto3.client("s3")
     key = f"uploads/{int(time.time())}_{file.name}"
     s3.upload_fileobj(file, bucket, key)
-    return Path(f"s3://{bucket}/{key}")
+    return f"s3://{bucket}/{key}"
 
 
-async def send_rag_ingest_event(pdf_path: Path) -> None:
+def _s3_name(uri: str) -> str:
+    return urlparse(uri).path.rsplit("/", 1)[-1]
+
+
+async def send_rag_ingest_event(pdf_uri: str) -> None:
     client = get_inngest_client()
     await client.send(
         inngest.Event(
             name="rag/ingest_pdf",
             data={
-                "pdf_path": str(pdf_path.resolve()),
-                "source_id": pdf_path.name,
+                "pdf_path": pdf_uri,
+                "source_id": _s3_name(pdf_uri),
             },
         )
     )
