@@ -144,7 +144,7 @@ async def send_rag_ingest_event(pdf_uri: str) -> None:
     )
 
 
-st.title("Upload a PDF to Ingest")
+st.title("Upload a PDF/TEST to Ingest")
 uploaded = st.file_uploader("Choose a PDF", type=["pdf"], accept_multiple_files=False)
 
 if uploaded is not None:
@@ -214,7 +214,8 @@ def wait_for_run_output(event_id: str, timeout_s: float = 120.0, poll_interval_s
 
 
 with st.form("rag_query_form"):
-    question = st.text_input("Your question", placeholder="")
+    question = st.text_input("Your question")
+    top_k = 5
     submitted = st.form_submit_button("Ask")
 
     if submitted and question.strip():
