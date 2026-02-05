@@ -214,8 +214,7 @@ def wait_for_run_output(event_id: str, timeout_s: float = 120.0, poll_interval_s
 
 
 with st.form("rag_query_form"):
-    question = st.text_input("Your question")
-    top_k = 5
+    question = st.text_input("Your question", placeholder="")
     submitted = st.form_submit_button("Ask")
 
     if submitted and question.strip():
