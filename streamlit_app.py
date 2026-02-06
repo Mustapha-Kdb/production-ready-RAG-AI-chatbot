@@ -144,7 +144,7 @@ async def send_rag_ingest_event(pdf_uri: str) -> None:
     )
 
 
-st.title("Upload a PDF/CSV to Ingest")
+st.title("Upload a PDF to Ingest")
 uploaded = st.file_uploader("Choose a PDF", type=["pdf"], accept_multiple_files=False)
 
 if uploaded is not None:
@@ -158,7 +158,7 @@ if uploaded is not None:
     st.caption("You can upload another PDF if you like.")
 
 st.divider()
-st.title("Ask a question about your PDFs/CSV")
+st.title("Ask a question about your PDFs")
 
 
 async def send_rag_query_event(question: str, top_k: int) -> None:
